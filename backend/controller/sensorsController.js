@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
 
+const Sensor = require('../models/sensorsModel')
 
 const sensors = [
     {id:1, type:'alpha', datas:[1,2,3]},
@@ -8,7 +9,8 @@ const sensors = [
 ]
 
 const getSensors = asyncHandler(async(req, res) => {
-    res.status(200).json({message: 'Get sensors'})
+    const sensors = await Sensor.find()
+    res.status(200).json(sensors)
 })
 
 const getSensorsId = asyncHandler(async(req, res) => {
@@ -27,20 +29,33 @@ const setSensors = asyncHandler(async(req, res) => {
         throw new Error('Add a id')
     }
     //check if exist
-    sen = {id:req.body.id, type:req.body.type, datas:req.body.datas}
-    sensors.push(sen)
-    res.status(201).json({message: `Added sensor`})
+    const sensor = await Sensor.create({
+        type: req.body.type,
+        datas: req.body.datas,
+        metrics: req.body.metrics
+    })
+    res.status(201).json(sensor)
 })
 
 const updateSensor = asyncHandler(async(req, res) => {
-    //update
-    res.status(200).json({message: `Update sensor ${req.params.id}`})
+    const sensor = await Sensor.findById(req.params.id)
+    if(!sensor){
+        res.status(400)
+        throw new Error('Sensor not found')
+    }
+    const updatedSensor = await Sensor.findByIdAndUpdate(req.params.id, req.body, {new: true,})
+    res.status(200).json(updatedSensor)
 })
 
 const deleteSensors = asyncHandler(async(req, res) => {
-    //check if exist
-    sensors.splice(req.params.id-1,req.params.id-1)
-    res.status(200).json({message: `Deleted sensor ${req.params.id}`})
+    const sensor = await Sensor.findById(req.params.id)
+    if(!sensor){
+        res.status(400)
+        throw new Error('Sensor not found')
+    }
+
+    await sensor.remove()
+    res.status(200).json({id: req.params.id})
 })
 
 module.exports = {
