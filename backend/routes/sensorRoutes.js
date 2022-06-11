@@ -3,14 +3,16 @@ const express = require('express')
 const router = express.Router()
 const {getSensors, getSensorsId, setSensors, deleteSensors, updateSensor} = require('../controller/sensorsController')
 
+const {protect} = require('../middleware/authMiddleware')
+
 module.exports = router
 
-router.get('/', getSensors)
+router.get('/', protect, getSensors)
 
-router.get('/:id', getSensorsId)
+router.get('/:id', protect, getSensorsId)
 
-router.post('/', setSensors)
+router.post('/', protect, setSensors)
 
-router.delete('/:id', deleteSensors)
+router.delete('/:id', protect, deleteSensors)
 
-router.put('/:id', updateSensor)
+router.put('/:id', protect, updateSensor)
