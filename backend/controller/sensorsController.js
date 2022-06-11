@@ -14,13 +14,12 @@ const getSensors = asyncHandler(async(req, res) => {
 })
 
 const getSensorsId = asyncHandler(async(req, res) => {
-    //check if exist
-    for (var i = 0; i < sensors.length; i++){
-        //get object
+    const sensor = await Sensor.findById(req.params.id)
+    if(!sensor){
+        res.status(400)
+        throw new Error('Sensor not found')
     }
-    res.status(200).json({sensor: `${sensors[req.params.id-1].id}`,
-                          type: `${sensors[req.params.id-1].type}`,
-                          datas: `${sensors[req.params.id-1].datas}`})
+    res.status(200).json(sensor)
 })
 
 const setSensors = asyncHandler(async(req, res) => {
@@ -28,7 +27,6 @@ const setSensors = asyncHandler(async(req, res) => {
         res.status(400)
         throw new Error('Add a id')
     }
-    //check if exist
     const sensor = await Sensor.create({
         type: req.body.type,
         datas: req.body.datas,
