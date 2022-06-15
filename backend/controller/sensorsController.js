@@ -58,14 +58,14 @@ const updateSensor = asyncHandler(async(req, res) => {
         throw new Error('Sensor not found')
     }
 
-    const user = await User.findById(req.user.id)
+    //const user = await User.findById(req.user.id)
     //Check for user
-    if(!user){
+    if(!req.user){
         res.status(401)
         throw new Error('User not found')
     }
     //Make sur the logged in user matches the sensor user
-    if(sensor.user.toString() !== user.id){
+    if(sensor.user.toString() !== req.user.id){
         res.status(401)
         throw new Error('User not authorized')
     }
@@ -83,14 +83,14 @@ const deleteSensors = asyncHandler(async(req, res) => {
         throw new Error('Sensor not found')
     }
 
-    const user = await User.findById(req.user.id)
+    //const user = await User.findById(req.user.id)
     //Check for user
-    if(!user){
+    if(!req.user){
         res.status(401)
         throw new Error('User not found')
     }
     //Make sur the logged in user matches the sensor user
-    if(sensor.user.toString() !== user.id){
+    if(sensor.user.toString() !== req.user.id){
         res.status(401)
         throw new Error('User not authorized')
     }
